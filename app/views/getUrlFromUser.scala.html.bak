@@ -1,0 +1,107 @@
+
+<head>
+	<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+ 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
+<div class="row">
+<div class="col-md-2"></div>
+<div class="col-md-10" style="margin-top: 2em;">
+	
+	<label>URL:</label>
+	<input id="url" type="text" name="url" style="width: 40%;">
+	<button type="button" class="btn btn-success" onclick="submitUrl()">Submit</button>
+	
+</div>
+
+</div>
+
+<div class="container">
+  <h2>Issue For Given URL </h2>
+            
+  <table class="table" id="myTable">
+    <thead>
+      <tr>
+        <th>TimeStamp For Open Issue</th>
+        <th>NoOfIssue</th>
+        
+      </tr>
+    </thead><!--
+    <tbody>
+	<tr class="success">
+        <td>Total</td>
+        <td>30</td>
+        
+      </tr>
+      <tr class="success">
+        <td>With In 24 hr</td>
+        <td>1</td>
+        
+      </tr>
+      <tr class="danger">
+        <td>With In 7 days</td>
+        <td>6</td>
+      </tr>
+      <tr class="info">
+        <td>more than 7 days</td>
+        <td>20</td>
+      </tr>
+    </tbody>-->
+  </table>
+</div>
+
+
+
+<script>
+	function submitUrl(){
+		
+		var api= $('#url').val();
+		var owner,repo;
+		var url = api.split("/")
+		if(url.length <5){
+			alert("Not valid URL");
+		}else{
+			owner=url[3];
+			repo=url[4];
+		}
+		
+		$.ajax({
+			type:'GET',
+			url: '/issue/'+repo+'/'+owner,
+			success:function(data){
+				data = data.split(":")
+				var table = document.getElementById("myTable");
+				
+				var row = table.insertRow(1);
+				var cell1 = row.insertCell(0);
+				var cell2 = row.insertCell(1);
+				cell1.innerHTML = "Total";
+				cell2.innerHTML = data[7];
+
+				row = table.insertRow(1);
+				cell1 = row.insertCell(0);
+				cell2 = row.insertCell(1);
+				cell1.innerHTML = "more than 7 days";
+				cell2.innerHTML = data[5];
+
+				row = table.insertRow(1);
+				cell1 = row.insertCell(0);
+				cell2 = row.insertCell(1);
+				cell1.innerHTML = "more than 24 hr but With In 7 days";
+				cell2.innerHTML = data[3];
+
+				row = table.insertRow(1);
+				cell1 = row.insertCell(0);
+				cell2 = row.insertCell(1);
+				cell1.innerHTML = "With In 24 hr";
+				cell2.innerHTML = data[1];
+
+				
+			}
+		
+		});
+	}
+</script>
